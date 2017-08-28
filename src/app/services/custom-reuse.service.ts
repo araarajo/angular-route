@@ -1,23 +1,27 @@
 import { Injectable } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from '@angular/router';
 
 @Injectable()
 export class CustomReuseService implements RouteReuseStrategy {
-  handlers: { [key: string]: DetachedRouteHandle } = {};
+  private handlers: { [key: string]: DetachedRouteHandle } = {};
+  private isHistoryBack: boolean;
 
-  constructor() {
+  constructor(private location: Location) {
+    this.location.subscribe(res => {
+      this.isHistoryBack = true;
+    });
   }
 
   calcKey(route: ActivatedRouteSnapshot) {
     let next = route;
     let url = '';
     while ( next ) {
-      if ( next.url ) {
+      if ( next.url.length > 0 ) {
         url = next.url.join('/');
       }
       next = next.firstChild;
     }
-    console.log('url', url);
     return url;
   }
 
@@ -27,7 +31,7 @@ export class CustomReuseService implements RouteReuseStrategy {
    * @returns {boolean}
    */
   shouldDetach(route: ActivatedRouteSnapshot): boolean {
-    console.log('CustomReuseStrategy:shouldDetach', route);
+    console.log('CustomReuseService:shouldDetach', route);
     return true;
   }
 
@@ -37,8 +41,8 @@ export class CustomReuseService implements RouteReuseStrategy {
    * @param handle
    */
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-    console.log('CustomReuseStrategy:store', route, handle);
-    this.handlers[this.calcKey((route))] = handle;
+    console.log('[CustomReuseService:store]', route, handle, this.calcKey(route));
+    this.handlers[this.calcKey(route)] = handle;
   }
 
   /**
@@ -47,17 +51,17 @@ export class CustomReuseService implements RouteReuseStrategy {
    * @returns {boolean}
    */
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    console.log('CustomReuseStrategy:shouldAttach', route);
+    console.log('[CustomReuseService:shouldAttach]', route, this.calcKey(route));
     return !!route.routeConfig && !!this.handlers[this.calcKey(route)];
   }
 
   /**
    * Retrieves the previously stored route.
    * @param route
-   * @returns {any}
+   * @returns {DetachedRouteHandle}
    */
   retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
-    console.log('CustomReuseStrategy:retrieve', route);
+    console.log('[CustomReuseService:retrieve]', route, this.calcKey(route));
     if ( !route.routeConfig ) {
       return null;
     }
@@ -71,7 +75,7 @@ export class CustomReuseService implements RouteReuseStrategy {
    * @returns {boolean}
    */
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
-    console.log('CustomReuseStrategy:shouldReuseRoute', future, curr);
+    console.log('[CustomReuseService:shouldReuseRoute]', future, curr);
     return this.calcKey(curr) === this.calcKey(future);
   }
 }

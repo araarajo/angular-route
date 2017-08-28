@@ -10,6 +10,7 @@ export class Test3Component implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('[ngOnInit] Test3');
   }
 
 }
