@@ -4,15 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { RootRouter } from './app.routes';
+import { ErrorComponent } from './containers/error/error.component';
+import { HomeModule } from './containers/home/home.module';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    HomeModule,
+    RootRouter
   ],
   providers: [],
   bootstrap: [AppComponent]
