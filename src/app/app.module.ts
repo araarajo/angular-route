@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { RootRouter } from './app.routes';
 import { ErrorComponent } from './containers/error/error.component';
 import { HomeModule } from './containers/home/home.module';
+import { RouteReuseStrategy } from '@angular/router';
+import { CustomReuseService } from 'app/services/custom-reuse.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,10 @@ import { HomeModule } from './containers/home/home.module';
     HomeModule,
     RootRouter
   ],
-  providers: [],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: CustomReuseService }
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
